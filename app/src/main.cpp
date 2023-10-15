@@ -1,7 +1,11 @@
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
+#include <iostream>
 
 int main(void)
 {
+
     GLFWwindow* window;
 
     /* Initialize the library */
@@ -18,6 +22,27 @@ int main(void)
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
+
+    GLenum err = glewInit();
+    if (GLEW_OK != err)
+    {
+        /* Problem: glewInit failed, something is seriously wrong. */
+        std::cout << "Error: " << glewGetErrorString(err) << std::endl;
+        exit(0);
+    }
+    std::cout << "Status: Using GLEW " << glewGetString(GLEW_VERSION) << std::endl;
+    std::cout << "Status: Using OPENGL " << glGetString(GL_VERSION) << std::endl;
+
+    float coordinates[6] = {
+        -0.5f,  0.5f,
+         0.5f,  0.5f,
+         0.5f, -0.5f
+    };
+
+    unsigned int triangleBuffer;
+    glGenBuffers(1, &triangleBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, triangleBuffer);
+    glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), coordinates, GL_STREAM_DRAW);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
