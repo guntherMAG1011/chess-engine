@@ -37,17 +37,6 @@ int main(void)
     std::cout << "Status: Using GLEW " << glewGetString(GLEW_VERSION) << std::endl;
     std::cout << "Status: Using OPENGL " << glGetString(GL_VERSION) << std::endl;
 
-    float coordinates[9] = {
-        -0.5f, -0.5f, 0.0f,
-         0.0f,  0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f
-    };
-
-    unsigned int triangleBuffer;
-    glGenBuffers(1, &triangleBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, triangleBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), coordinates, GL_STATIC_DRAW);
-
     const char* vertexShaderSource = "#version 330 core\n"
         "layout (location = 0) in vec3 aPos;\n"
         "void main()\n"
@@ -113,12 +102,33 @@ int main(void)
     glDeleteShader(vertexShaderId);
     glDeleteShader(fragShaderId);
 
+    unsigned int vertexArrayObjectId;
+    glGenVertexArrays(1, &vertexArrayObjectId);
+    glBindVertexArray(vertexArrayObjectId);
+
+    float coordinates[9] = {
+    -0.5f, -0.5f, 0.0f,
+     0.0f,  0.5f, 0.0f,
+     0.5f, -0.5f, 0.0f
+    };
+
+    unsigned int triangleBuffer;
+    glGenBuffers(1, &triangleBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, triangleBuffer);
+    glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), coordinates, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
+        //glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        ///* Render here */
+        //glClear(GL_COLOR_BUFFER_BIT);
+
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
