@@ -106,19 +106,32 @@ int main(void)
     glGenVertexArrays(1, &vertexArrayObjectId);
     glBindVertexArray(vertexArrayObjectId);
 
-    float coordinates[9] = {
-    -0.5f, -0.5f, 0.0f,
-     0.0f,  0.5f, 0.0f,
-     0.5f, -0.5f, 0.0f
+    float vertices[] = {
+        0.5f, 0.5f, 0.0f, // top right
+        0.5f, -0.5f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f, // bottom left
+        -0.5f, 0.5f, 0.0f // top left
     };
 
-    unsigned int triangleBuffer;
-    glGenBuffers(1, &triangleBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, triangleBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), coordinates, GL_STATIC_DRAW);
+    unsigned int indices[] = { // note that we start from 0!
+        0, 1, 3, // first triangle
+        1, 2, 3 // second triangle
+    };
+
+    unsigned int vertexBufferId;
+    glGenBuffers(1, &vertexBufferId);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
+    glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), vertices, GL_STATIC_DRAW);
+
+    unsigned int elementBufferId;
+    glGenBuffers(1, &elementBufferId);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferId);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 
     /* Loop until the user closes the window */
@@ -128,7 +141,8 @@ int main(void)
         ///* Render here */
         //glClear(GL_COLOR_BUFFER_BIT);
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        //glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
